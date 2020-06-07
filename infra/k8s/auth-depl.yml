@@ -16,6 +16,12 @@ spec:
         # name here is only for log purposes
         - name: auth
           image: thuongho/auth
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service
