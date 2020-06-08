@@ -6,13 +6,13 @@ import { promisify } from 'util';
 // use promisify to turn scrypt into async await base
 const scryptAsync = promisify(scrypt);
 
-export class Password {
+export class PasswordManager {
   static async toHash(password: string) {
     const salt = randomBytes(8).toString('hex');
     // after we hash, we get back a buffer which is like an array with raw data
     const buf = (await scryptAsync(password, salt, 64)) as Buffer;
 
-    return `${buf.toString('hex')}.${salt}}`;
+    return `${buf.toString('hex')}.${salt}`;
   }
 
   static async compare(storedPassword: string, suppliedPassword: string) {
