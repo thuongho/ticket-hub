@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-depl
+# describe how this deployment should behave
+spec:
+  # only want 1 pod
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  # describes how each pod is created and manages how deployment should behave
+  template:
+    # metadata and selector is how deployment is going to find set of pods it's going to manage
+    metadata:
+      labels:
+        app: client
+    # describes how every pod should behave
+    spec:
+      containers:
+        - name: client
+          image: thuongho/client
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-srv
+spec:
+  # selector is how the service is going to find the pod
+  selector:
+    app: client
+  ports:
+    # name here isn't so important on accessing the port, it is for logging purposes
+    - name: client
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
