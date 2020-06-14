@@ -12,6 +12,9 @@ export const errorHandler = (
     return res.status(err.statusCode).send({ errors: err.serializeErrors() });
   }
 
+  // log out uncaught error
+  console.error(err);
+
   // catch all
   res.status(400).send({
     errors: [{ message: 'Something went wrong' }]
