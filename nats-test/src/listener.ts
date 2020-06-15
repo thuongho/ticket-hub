@@ -11,9 +11,15 @@ const stan = nats.connect('ticketing', clientId, {
 stan.on('connect', () => {
   console.log('Listener connected to NATS');
 
+  stan.on('close', () => {
+    console.log('NATS connection closed!');
+  });
+
+  const options = stan.subscriptionOptions().setManualAckMode(true);
   const subscription = stan.subscribe(
     'ticket:created',
-    'orders-service-queue-group'
+    'orders-service-queue-group',
+    options
   );
 
   // event is referred to as 'message' in the world of NATS
@@ -23,5 +29,10 @@ stan.on('connect', () => {
     if (typeof data === 'string') {
       console.log(`Received event #${msg.getSequence()}, with data: ${data}`);
     }
+
+    msg.ack();
   });
 });
+
+process.on('SIGINT', () => stan.close());
+process.on('SIGTERM', () => stan.close());
