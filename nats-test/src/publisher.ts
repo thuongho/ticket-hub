@@ -13,18 +13,13 @@ stan.on('connect', async () => {
 
   const publisher = new TicketCreatedPublisher(stan);
 
-  await publisher.publish({
-    id: '1234',
-    title: 'Rolling Waves',
-    price: 16
-  });
-  // const data = JSON.stringify({
-  //   id: '12324',
-  //   title: 'Rocking Live',
-  //   price: 20
-  // });
-
-  // stan.publish('ticket:created', data, () => {
-  //   console.log('Published ticket event.');
-  // });
+  try {
+    await publisher.publish({
+      id: '1234',
+      title: 'Rolling Waves',
+      price: 16
+    });
+  } catch (err) {
+    console.error(err);
+  }
 });
