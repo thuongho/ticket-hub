@@ -14,6 +14,15 @@ const start = async () => {
 
     await natsWrapper.connect('ticketing', 'joker', 'http://nats-srv:4222');
 
+    // Shutting down gracefullly
+    natsWrapper.client.on('close', () => {
+      console.log('NATS connection closed!');
+      process.exit();
+    });
+
+    process.on('SIGINT', () => natsWrapper.client.close());
+    process.on('SIGTERM', () => natsWrapper.client.close());
+
     // normally it is mongodb://localhost/table_name
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
