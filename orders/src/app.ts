@@ -3,6 +3,10 @@ import 'express-async-errors';
 import { json } from 'body-parser';
 import cookieSession from 'cookie-session';
 import { errorHandler, NotFoundError, currentUser } from '@thtickets/common';
+import { deleteOrdersRouter } from './routes/delete';
+import { indexOrdersRouter } from './routes/index';
+import { newOrdersRouter } from './routes/new';
+import { showOrdersRouter } from './routes/show';
 
 const app = express();
 // traffic proxied through ingress
@@ -16,6 +20,11 @@ app.use(
   })
 );
 app.use(currentUser);
+
+app.use(deleteOrdersRouter);
+app.use(indexOrdersRouter);
+app.use(newOrdersRouter);
+app.use(showOrdersRouter);
 
 app.all('*', async () => {
   throw new NotFoundError();
