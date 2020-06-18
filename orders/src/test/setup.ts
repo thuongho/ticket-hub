@@ -2,6 +2,7 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 
+// TS has a type definition for what global is and signin is not part of it
 declare global {
   namespace NodeJS {
     interface Global {
@@ -14,26 +15,30 @@ jest.mock('../nats-wrapper.ts');
 
 let mongo: any;
 beforeAll(async () => {
-  jest.clearAllMocks();
+  process.env.JWT_KEY = 'asdfda';
 
-  process.env.JWT_KEY = 'asdfadas';
-  // before all test, create mongodb memory server
+  // before all tests, create mongodb memory server
   mongo = new MongoMemoryServer();
   const mongoUri = await mongo.getUri();
 
   // connect to in memory mongo server
   await mongoose.connect(mongoUri, {
+    // mongo rewrote url parser that is a big change, so it sets it as a flag
     useNewUrlParser: true,
+    // monitoring all the servers in a replica set or shared cluster
     useUnifiedTopology: true
   });
 });
 
 beforeEach(async () => {
+  jest.clearAllMocks();
   // look for all the connections in mongoose and delete those connections
   const collections = await mongoose.connection.db.collections();
 
   // reset data before each test we run
   for (let collection of collections) {
+    // method in mongoose to delete documents from a collection
+    // pass a query that contains the conditions and the documents gets deleted
     await collection.deleteMany({});
   }
 });
@@ -44,13 +49,13 @@ afterAll(async () => {
 });
 
 global.signin = () => {
-  // Build a JWT payload. { id, email }
+  // Build a jWT payload. { id, email }
   const payload = {
     id: new mongoose.Types.ObjectId().toHexString(),
     email: 'test@test.com'
   };
 
-  // Create the JWT!
+  // Create the JWT
   const token = jwt.sign(payload, process.env.JWT_KEY!);
 
   // Build a session object { jwt: MY_JWT }
@@ -62,7 +67,7 @@ global.signin = () => {
   // Take JSON and encode it as base64
   const base64 = Buffer.from(sessionJSON).toString('base64');
 
-  // return a string thats the cookie with the encoded data
+  // Return a string thats the cookie with the encoded data
   const cookie = `express:sess=${base64}`;
   return [cookie];
 };
