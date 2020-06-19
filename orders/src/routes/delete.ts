@@ -5,6 +5,8 @@ import {
   NotFoundError
 } from '@thtickets/common';
 import { Order, OrderStatus } from '../models/order';
+import { natsWrapper } from '../nats-wrapper';
+import { OrderCancelledPublisher } from '../events/order-cancelled-publisher';
 
 const router = express.Router();
 
@@ -25,6 +27,14 @@ router.delete(
     }
     order.status = OrderStatus.Cancelled;
     await order.save();
+
+    // Publish a cancelled event
+    new OrderCancelledPublisher(natsWrapper.client).publish({
+      id: order.id,
+      ticket: {
+        id: order.ticket.id
+      }
+    });
 
     res.status(204).send(order);
   }
