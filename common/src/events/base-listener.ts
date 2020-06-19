@@ -6,7 +6,7 @@ interface Event {
   data: any;
 }
 
-export default abstract class Listener<T extends Event> {
+export abstract class Listener<T extends Event> {
   // channel name
   abstract subject: T['subject'];
   abstract queueGroupName: string;
