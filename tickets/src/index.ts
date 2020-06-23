@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import { app } from './app';
 import { natsWrapper } from './nats-wrapper';
+import { OrderCancelledListener } from './events/listeners/order-cancelled-listener';
+import { OrderCreatedListener } from './events/listeners/order-created-listener';
 
 const start = async () => {
   try {
@@ -38,6 +40,10 @@ const start = async () => {
 
     process.on('SIGINT', () => natsWrapper.client.close());
     process.on('SIGTERM', () => natsWrapper.client.close());
+
+    // Listeners
+    new OrderCancelledListener(natsWrapper.client).listen();
+    new OrderCreatedListener(natsWrapper.client).listen();
 
     // normally it is mongodb://localhost/table_name
     await mongoose.connect(process.env.MONGO_URI, {

@@ -14,9 +14,8 @@ jest.mock('../nats-wrapper.ts');
 
 let mongo: any;
 beforeAll(async () => {
-  jest.clearAllMocks();
-
   process.env.JWT_KEY = 'asdfadas';
+
   // before all test, create mongodb memory server
   mongo = new MongoMemoryServer();
   const mongoUri = await mongo.getUri();
@@ -29,6 +28,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  jest.clearAllMocks();
   // look for all the connections in mongoose and delete those connections
   const collections = await mongoose.connection.db.collections();
 
