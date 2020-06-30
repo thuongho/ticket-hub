@@ -4,8 +4,11 @@ import {
   requireAuth,
   validateRequest,
   BadRequestError,
-  NotFoundError
+  NotFoundError,
+  NotAuthorizedError,
+  OrderStatus
 } from '@thtickets/common';
+import { Order } from '../models/order';
 
 const router = express.Router();
 
@@ -16,6 +19,22 @@ router.post(
   body('orderId').not().isEmpty(),
   validateRequest,
   async (req: Request, res: Response) => {
+    const { orderId, token } = req.body;
+
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      throw new NotFoundError();
+    }
+
+    if (order.userId !== req.currentUser!.id) {
+      throw new NotAuthorizedError();
+    }
+
+    if (order.status === OrderStatus.Cancelled) {
+      throw new BadRequestError('Cannot pay for a cancelled order');
+    }
+
     res.send({ success: true });
   }
 );
