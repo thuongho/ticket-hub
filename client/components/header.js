@@ -4,6 +4,8 @@ export default ({ currentUser }) => {
   const links = [
     !currentUser && { label: 'Sign in', href: '/auth/signin' },
     !currentUser && { label: 'Sign up', href: '/auth/signup' },
+    currentUser && { label: 'My Orders', href: '/orders' },
+    currentUser && { label: 'Sell Tickets', href: '/tickets/new' },
     currentUser && { label: 'Sign out', href: '/auth/signout' }
   ]
     // filters out only truthy
