@@ -5,8 +5,8 @@ import {
   PaymentCreatedEvent,
   Subjects
 } from '@thtickets/common';
-import { queueGroupName } from '../../../../payments/src/events/listeners/queue-group-name';
-import { Order } from '../../../../payments/src/models/order';
+import { queueGroupName } from './queue-group-name';
+import { Order } from '../../models/order';
 
 export class PaymentCreatedListener extends Listener<PaymentCreatedEvent> {
   readonly subject: Subjects.PaymentCreated = Subjects.PaymentCreated;
