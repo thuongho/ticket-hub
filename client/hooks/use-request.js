@@ -5,11 +5,11 @@ export default ({ url, method, body, onSuccess }) => {
   // method === 'get' | 'post' | 'patch'
   const [errors, setErrors] = useState([]);
 
-  const doRequest = async () => {
+  const doRequest = async (props = {}) => {
     try {
       // clear out errors each time users make a request
       setErrors(null);
-      const response = await axios[method](url, body);
+      const response = await axios[method](url, { ...body, ...props });
 
       if (onSuccess) {
         onSuccess(response.data);
