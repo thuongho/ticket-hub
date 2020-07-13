@@ -54,7 +54,7 @@ spec:
       port: 80
       protocol: TCP
       targetPort: http
-    - name:
+    - name: https
       port: 443
       protocol: TCP
       targetPort: https
